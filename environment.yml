@@ -5,8 +5,8 @@ channels:
 dependencies:
   - python
   - numpy
-  - vampyr
   - scipy
   - matplotlib
   - qcelemental
+  - pip
   
