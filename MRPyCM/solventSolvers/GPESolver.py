@@ -23,12 +23,12 @@ class GPESolver():
     
     @property
     def Density(self):
-        return self.Density 
+        return self._Density 
     
     
     @Density.setter
     def Density(self, rho):
-        self.Density = rho
+        self._Density = rho
     
     
     @property 

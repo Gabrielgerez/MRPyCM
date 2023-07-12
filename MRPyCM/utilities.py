@@ -3,7 +3,7 @@ import numpy as np
 from qcelemental.physical_constants.context import PhysicalConstantsContext
 
 
-def compute_kappa_out(eps_out, Ionic_strength):
+def computeKappaOut(eps_out, Ionic_strength):
     """Computes the value of the Debye Huckel Screening parameter on
     the outside of the solute volume.
 

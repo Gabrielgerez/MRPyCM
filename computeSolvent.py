@@ -1,11 +1,11 @@
-if __name__ == '__main__':
-    import sys
-
-import soluteFunctions as sf
-import solventSolvers as ss
-import utilities as ut
+import MRPyCM.soluteFunctions as sf
+import MRPyCM.solventSolvers as ss
+import MRPyCM.utilities as ut
 import numpy as np
 from vampyr import vampyr3d as vp
+
+if __name__ == '__main__':
+    import sys
 
 
 # Global parameters
@@ -62,7 +62,7 @@ def main(*args, **kwargs):
         
     if ("pb" == kwargs["solvent_type"].lower()):
         I = kwargs["I"] if ("I" in keys) else 0.1
-        kappa_sq = sf.DHScreening(C, inside=0.0, outside=ut.compute_kappa_out(eps_out, I))
+        kappa_sq = sf.DHScreening(C, inside=0.0, outside=ut.computeKappaOut(eps_out, I))
         k_sq_tree = P_eps(kappa_sq)
         
         PB_SCRF = ss.PBESolver(dens, perm_tree, k_sq_tree, Poissop, D_abgv)
@@ -89,10 +89,7 @@ def main(*args, **kwargs):
         
         print("E_R: ", reaction_op.trace())
 
-    pass
-    
-
-    
+    pass  
 
 
 if __name__ == '__main__':
