@@ -1,0 +1,12 @@
+name: MRPyCM-env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python
+  - numpy
+  - vampyr
+  - scipy
+  - matplotlib
+  - qcelemental
+  
