@@ -1,8 +1,7 @@
-import MRPyCM.soluteFunctions as sf
-import MRPyCM.solventSolvers as ss
-import MRPyCM.utilities as ut
+import MRPyCM
 import numpy as np
 from vampyr import vampyr3d as vp
+
 
 if __name__ == '__main__':
     import sys
@@ -47,44 +46,44 @@ def main(*args, **kwargs):
     radii = kwargs["radii"] if ("radii" in keys) else [3.7794522492515403]  
     width = kwargs["sigma"] if ("sigma" in keys) else 0.2 
 
-    C = sf.Cavity(cav_coords, radii, width)
+    C = MRPyCM.Cavity(cav_coords, radii, width)
     
       
     eps_out = kwargs["eps_out"] if ("eps_out" in keys) else 2.0
     
     if ("linear" == kwargs["perm_type"].lower()):
-        perm = sf.Linear(C, inside=1.0, outside=eps_out)
+        perm = MRPyCM.Linear(C, inside=1.0, outside=eps_out)
     else:
-        perm = sf.Exponential(C, inside=1.0, outside=eps_out)
+        perm = MRPyCM.Exponential(C, inside=1.0, outside=eps_out)
         
     perm_tree = P_eps(perm)
     
         
     if ("pb" == kwargs["solvent_type"].lower()):
         I = kwargs["I"] if ("I" in keys) else 0.1
-        kappa_sq = sf.DHScreening(C, inside=0.0, outside=ut.computeKappaOut(eps_out, I))
+        kappa_sq = MRPyCM.DHScreening(C, inside=0.0, outside=MRPyCM.computeKappaOut(eps_out, I))
         k_sq_tree = P_eps(kappa_sq)
         
-        PB_SCRF = ss.PBESolver(dens, perm_tree, k_sq_tree, Poissop, D_abgv)
-        reaction_op = ss.Reaction_operator(PB_SCRF)
+        PB_SCRF = MRPyCM.PBSolver(dens, perm_tree, k_sq_tree, Poissop, D_abgv)
+        reaction_op = MRPyCM.ReactionOperator(PB_SCRF)
         reaction_op.setup(epsilon)
         
         print("E_R: ", reaction_op.trace())
         
     elif ("lpb" == kwargs["solvent_type"].lower()):
         I = kwargs["I"] if ("I" in keys) else 0.1
-        kappa_sq = sf.DHScreening(C, inside=0.0, outside=ut.compute_kappa_out(eps_out, I))
+        kappa_sq = MRPyCM.DHScreening(C, inside=0.0, outside=MRPyCM.computeKappaOut(eps_out, I))
         k_sq_tree = P_eps(kappa_sq)
         
-        LPBE_SCRF = ss.LPBESolver(dens, perm_tree,k_sq_tree, Poissop, D_abgv)
-        reaction_op = ss.Reaction_operator(LPBE_SCRF)
+        LPBE_SCRF = MRPyCM.LPBSolver(dens, perm_tree,k_sq_tree, Poissop, D_abgv)
+        reaction_op = MRPyCM.ReactionOperator(LPBE_SCRF)
         reaction_op.setup(epsilon)
         
         print("E_R: ", reaction_op.trace())
         
     else:
-        SCRF = ss.GPESolver(dens, perm_tree, Poissop, D_abgv)
-        reaction_op = ss.Reaction_operator(SCRF)
+        SCRF = MRPyCM.GPESolver(dens, perm_tree, Poissop, D_abgv)
+        reaction_op = MRPyCM.ReactionOperator(SCRF)
         reaction_op.setup(epsilon)
         
         print("E_R: ", reaction_op.trace())
@@ -94,5 +93,4 @@ def main(*args, **kwargs):
 
 if __name__ == '__main__':
     arg_dict = eval(sys.argv[1])
-    print(arg_dict)
     main(**arg_dict)

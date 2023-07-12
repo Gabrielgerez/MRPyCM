@@ -3,7 +3,7 @@ from vampyr import vampyr3d as vp
 from . import GPESolver
 
 
-class PBESolver(GPESolver):
+class PBSolver(GPESolver):
     
     
     def __init__(self, rho, eps, kappa, Poisson_operator, Derivative_operator):
@@ -12,7 +12,7 @@ class PBESolver(GPESolver):
         
         
     def computeGamma(self, V_tot, epsilon):
-        gamma = super().computeGamma(V_tot)
+        gamma = super().computeGamma(V_tot, epsilon)
 
         sinh = vp.FunctionMap(np.sinh, epsilon)
         

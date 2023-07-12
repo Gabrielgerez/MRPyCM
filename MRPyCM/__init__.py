@@ -1,5 +1,5 @@
-from . import soluteFunctions
-from . import solventSolvers
-from . import utilities
+from .soluteFunctions import *
+from .solventSolvers import *
+from .utilities import *
 
 __all__ = ["soluteFunctions", "solventSolvers", "utilities"]
