@@ -1,6 +1,6 @@
+from vampyr import vampyr3d as vp
 import MRPyCM
 import numpy as np
-from vampyr import vampyr3d as vp
 
 
 if __name__ == '__main__':
@@ -8,24 +8,43 @@ if __name__ == '__main__':
 
 
 # Global parameters
-def main(*args, **kwargs):
+def run(*args, **kwargs):
     """
     input parameter dictionary:
     "order" : int
     "box" : list of floats
     "prec" : float
+    "charge_width" : float
+    "charges" : list of floats
+    "charge_coords" : list of lists of floats
     "cav_coords" : list of lists of floats
-    "radii" : list of floats
-    "sigma" : float
+    "cav_radii" : list of floats
+    "boundary_width" : float
     "eps_out" : float
-    "perm_type" : string
+    "perm_formulation" : string
     "solvent_type" : string
-    "I" : float
+    "ionic_strength" : float
     """
+    # Define parameters and defaults
     keys =kwargs.keys()
     k = kwargs["order"] if ("order" in keys) else 5                            # Polynomial order
     L = kwargs["box"] if ("box" in keys) else  [-10,10]                        # Simulation box size
     epsilon = kwargs["prec"] if ("prec" in keys) else 1.0e-4                   # Relative precision
+    
+    charge_width = kwargs["charge_width"] if ("charge_width" in keys) else 1000.0
+    charges = kwargs["charges"] if ("charges" in keys) else [1.0]
+    charge_coords = kwargs["charge_coords"] if ("charge_coords" in keys) else [[0.0000000000,    0.0000000000,    0.000000000]]
+    
+    cav_coords = kwargs["cav_coords"] if ("cav_coords" in keys) else  charge_coords 
+    cav_radii = kwargs["cav_radii"] if ("cav_radii" in keys) else [3.7794522492515403]  
+    boundary_width = kwargs["boundary_width"] if ("boundary_width" in keys) else 0.2 
+    
+    eps_out = kwargs["eps_out"] if ("eps_out" in keys) else 2.0
+    perm_formulation = kwargs["perm_formulation"] if "perm_formulation" in keys else "exponential"
+    
+    solvent_type = kwargs["solvent_type"] if ("solvent_type" in keys) else "gpe"
+    ionic_strength = kwargs["ionic_strength"] if ("ionic_strength" in keys) else 0.1
+    
     
     # Define MRA and multiwavelet projector
     MRA = vp.MultiResolutionAnalysis(order=k, box=L)
@@ -34,63 +53,37 @@ def main(*args, **kwargs):
     Poissop = vp.PoissonOperator(mra=MRA, prec=epsilon)
 
     # nuclear density and total molecular density to compute the vacuum potential
-    #TODO: implement a molecular density compute function in utilities
-    beta = 10000
-    alpha = (beta / np.pi)**(3.0/2.0)
-    charge = 1.0
-    dens = P_eps(vp.GaussFunc(beta=beta, alpha=alpha*charge, position=[0.0, 0.0, 0.0], poly_exponent=[0,0,0]))
+    dens = P_eps(MRPyCM.constructChargeDensity(charge_coords, charges, width_parameter=charge_width))
 
     # Solvent part
-
-    cav_coords = kwargs["cav_coords"] if ("cav_coords" in keys) else [[0.0000000000,    0.0000000000,    0.000000000]] #centered in 
-    radii = kwargs["radii"] if ("radii" in keys) else [3.7794522492515403]  
-    width = kwargs["sigma"] if ("sigma" in keys) else 0.2 
-
-    C = MRPyCM.Cavity(cav_coords, radii, width)
+    C = MRPyCM.Cavity(cav_coords, cav_radii, boundary_width)
     
-      
-    eps_out = kwargs["eps_out"] if ("eps_out" in keys) else 2.0
-    
-    if ("linear" == kwargs["perm_type"].lower()):
-        perm = MRPyCM.Linear(C, inside=1.0, outside=eps_out)
+    if ("linear" == perm_formulation.lower()):
+        perm = P_eps(MRPyCM.Linear(C, inside=1.0, outside=eps_out))
     else:
-        perm = MRPyCM.Exponential(C, inside=1.0, outside=eps_out)
+        perm = P_eps(MRPyCM.Exponential(C, inside=1.0, outside=eps_out))
         
-    perm_tree = P_eps(perm)
-    
         
-    if ("pb" == kwargs["solvent_type"].lower()):
-        I = kwargs["I"] if ("I" in keys) else 0.1
-        kappa_sq = MRPyCM.DHScreening(C, inside=0.0, outside=MRPyCM.computeKappaOut(eps_out, I))
-        k_sq_tree = P_eps(kappa_sq)
+    if ("pb" == solvent_type.lower()):
+        k_sq = P_eps(MRPyCM.DHScreening(C, inside=0.0, outside=MRPyCM.computeKappaOut(eps_out, ionic_strength)))
+        Solver = MRPyCM.PBSolver(dens, perm, k_sq, Poissop, D_abgv)
         
-        PB_SCRF = MRPyCM.PBSolver(dens, perm_tree, k_sq_tree, Poissop, D_abgv)
-        reaction_op = MRPyCM.ReactionOperator(PB_SCRF)
-        reaction_op.setup(epsilon)
-        
-        print("E_R: ", reaction_op.trace())
-        
-    elif ("lpb" == kwargs["solvent_type"].lower()):
-        I = kwargs["I"] if ("I" in keys) else 0.1
-        kappa_sq = MRPyCM.DHScreening(C, inside=0.0, outside=MRPyCM.computeKappaOut(eps_out, I))
-        k_sq_tree = P_eps(kappa_sq)
-        
-        LPBE_SCRF = MRPyCM.LPBSolver(dens, perm_tree,k_sq_tree, Poissop, D_abgv)
-        reaction_op = MRPyCM.ReactionOperator(LPBE_SCRF)
-        reaction_op.setup(epsilon)
-        
-        print("E_R: ", reaction_op.trace())
+    elif ("lpb" == solvent_type.lower()):
+        k_sq = P_eps(MRPyCM.DHScreening(C, inside=0.0, outside=MRPyCM.computeKappaOut(eps_out, ionic_strength)))
+        Solver = MRPyCM.LPBSolver(dens, perm, k_sq, Poissop, D_abgv)
         
     else:
-        SCRF = MRPyCM.GPESolver(dens, perm_tree, Poissop, D_abgv)
-        reaction_op = MRPyCM.ReactionOperator(SCRF)
-        reaction_op.setup(epsilon)
-        
-        print("E_R: ", reaction_op.trace())
-
-    pass  
+        Solver = MRPyCM.GPESolver(dens, perm, Poissop, D_abgv)
+    
+    
+    reaction_op = MRPyCM.ReactionOperator(Solver)
+    reaction_op.setup(epsilon)
+    E_R = reaction_op.trace()
+    print("E_R: ", E_R)
+    return E_R, Solver.iterations
+    
 
 
 if __name__ == '__main__':
     arg_dict = eval(sys.argv[1])
-    main(**arg_dict)
+    run(**arg_dict)

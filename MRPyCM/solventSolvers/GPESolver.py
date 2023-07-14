@@ -13,12 +13,15 @@ class GPESolver():
         self.P = Poisson_operator
         self.D = Derivative_operator
         self.V_R = rho
+        self.iterations = 0
         self.instance_index = len(GPESolver.instances)
         GPESolver.instances.append(self)
         
         
     def computeGamma(self, V_tot, epsilon):
-        return (1.0/(4*np.pi)) * vp.dot( vp.gradient(self.D, self.Permittivity), vp.gradient(self.D,V_tot)) * ( self.Permittivity**(-1))
+        gamma = (1.0/(4*np.pi)) * vp.dot( vp.gradient(self.D, self.Permittivity), vp.gradient(self.D,V_tot)) * ( self.Permittivity**(-1))
+        gamma.crop(epsilon)
+        return gamma
     
     
     @property
@@ -84,6 +87,7 @@ class GPESolver():
             print(f"{i} \t |{self.instances[self.instance_index].V_R.norm()}\t |{update} \t |{E_r} \t |{dE_r}") #TODO: make this a better print statement
            
             if (update < prec):
+                self.instances[self.instance_index].iterations = i
                 break
         else:
             raise RuntimeError("Did not converge")

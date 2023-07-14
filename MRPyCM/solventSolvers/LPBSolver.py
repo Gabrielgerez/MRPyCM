@@ -7,4 +7,6 @@ class LPBSolver(PBSolver):
     
     def computeGamma(self, V_tot, epsilon):
         gamma =  super(PBSolver, self).computeGamma(V_tot, epsilon)
-        return gamma - (1/(4*np.pi))*(self.k_sq * V_tot)
+        k_sq_V_tot = self.k_sq * V_tot
+        k_sq_V_tot.crop(epsilon)
+        return gamma - (1/(4*np.pi))*k_sq_V_tot

@@ -1,3 +1,4 @@
+from vampyr import vampyr3d as vp
 import matplotlib.pyplot as plt
 import numpy as np
 from qcelemental.physical_constants.context import PhysicalConstantsContext
@@ -37,4 +38,24 @@ def plotFunction(function, left=-1.0, right=1.0, npoints=100, title=""):
         plt.plot(x_plt, f_plt)
         plt.title(title)
         plt.show()
-        
+
+
+def constructChargeDensity(positions, charges, width_parameter):
+    """Computes the charge density of a set of point charges using a Gaussian
+    function. The Gaussian function is centered at the position of the charge
+    and the width parameter is the standard deviation of the Gaussian.
+
+    Args:
+        positions (list of lists of floats): list of positions of the charges
+        charges (list of floats): list of charges
+        width_parameter (int, optional): Standard deviation of the Gaussian. Defaults to 1000.
+
+    Returns:
+        function: function that computes the charge density at a given position
+    """
+    charge_density = vp.GaussExp()
+    for (pos, charge) in zip(positions, charges):
+        beta = width_parameter
+        alpha = (beta / np.pi)**(3.0/2.0)
+        charge_density.append(vp.GaussFunc(beta=beta, alpha=alpha*charge, position=pos, poly_exponent=[0,0,0]))
+    return charge_density
