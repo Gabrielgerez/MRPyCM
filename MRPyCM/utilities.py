@@ -37,7 +37,8 @@ def plotFunction(function, left=-1.0, right=1.0, npoints=100, title=""):
         f_plt = [function([x, 0.0, 0.0]) for x in x_plt]
         plt.plot(x_plt, f_plt)
         plt.title(title)
-        plt.show()
+        plt.savefig(title+".png")
+        plt.clf()
 
 
 def constructChargeDensity(positions, charges, width_parameter):

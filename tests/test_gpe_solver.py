@@ -44,4 +44,3 @@ def test_zeroth_energy():
 def test_first_iteration():
     Solver.setup(epsilon)
     assert np.isclose(Solver.computeEnergy(), -0.4665446630004932, rtol=epsilon, atol=epsilon)
-

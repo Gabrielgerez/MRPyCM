@@ -37,6 +37,7 @@ class GPESolver():
         
         gamma_0 = self.computeGamma(self.V_vac, prec)
         V_R_0 = self.P(self.rho_eff + gamma_0)
+
         return V_R_0.deepCopy()
         
     
