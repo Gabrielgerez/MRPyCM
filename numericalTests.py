@@ -4,16 +4,16 @@ import computeSolvent
 def make_input(charges, charge_coords, perm_formulation, solvent_type):
 
     in_dict = {
-        "order" : 5 ,
-        "box" : [-10,10],
-        "prec" : 1.0e-4,
+        "order" : 9 ,
+        "box" : [-16,16],
+        "prec" : 1.0e-5,
         "charge_width" : 1000,
         "charges" : charges,
         "charge_coords" : charge_coords,
         "cav_coords" : [[0.0, 0.0, 0.0]],
-        "cav_radii" : [3.7794522509156563],
-        "boundary_width" : 0.1,
-        "eps_out" : 78.54,
+        "cav_radii" : [3.7794522509156563],  # 2.0 bohr
+        "boundary_width" : 0.2,
+        "eps_out" : 2,
         "perm_formulation" : perm_formulation,
         "solvent_type" : solvent_type,
         "ionic_strength" : 0.1,
@@ -64,7 +64,7 @@ cases = [
                            [-0.37794522492515403, 0.37794522492515403, -0.37794522492515403],
                            [0.9448630623128851, -0.9448630623128851, 0.9448630623128851],
                            [-1.5117808997006161, -1.5117808997006161, -1.5117808997006161]]
-    },
+    }
 ]
 numeric_tests = {}
 print("Running numeric tests")
