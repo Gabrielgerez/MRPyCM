@@ -61,8 +61,6 @@ def run(*args, **kwargs):
 
     # nuclear density and total molecular density to compute the vacuum potential
     dens = P_eps(MRPyCM.constructChargeDensity(charge_coords, charges, width_parameter=charge_width))
-    print("norm of rho: ", dens.norm())
-    print("integral of rho: ", dens.integrate())
     # Solvent part
     C = MRPyCM.Cavity(cav_coords, cav_radii, boundary_width)
     
@@ -87,7 +85,7 @@ def run(*args, **kwargs):
     reaction_op = MRPyCM.ReactionOperator(Solver)
     reaction_op.setup(epsilon)
     E_R = reaction_op.trace()
-    print("E_R: ", E_R)
+    print("E_R: ", E_R, "iterations: ", Solver.iterations)
     return E_R, Solver.iterations
     
 
