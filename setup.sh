@@ -13,7 +13,7 @@ find_in_conda_env(){
 }
 
 # create or activate conda environment
-## check if environment exists, if not create it then activate it
+# check if environment exists, if not create it then activate it
 if find_in_conda_env ".*MRPyCM-env.*" ; then
     echo "MRPyCM-env found"
 else 
@@ -26,7 +26,10 @@ conda activate MRPyCM-env
 
 
 
-# # build vampyr
+# build vampyr
 echo "Building vampyr"
 cd external/vampyr
 pip install .
+
+# run tests
+pytest --ignore=external

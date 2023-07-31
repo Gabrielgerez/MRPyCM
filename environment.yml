@@ -8,5 +8,6 @@ dependencies:
   - scipy
   - matplotlib
   - qcelemental
-  - pip
+  - pip:
+    - pytest
   
