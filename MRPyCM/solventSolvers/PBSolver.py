@@ -17,4 +17,4 @@ class PBSolver(GPESolver):
         sinh = vp.FunctionMap(np.sinh, epsilon)
         k_sq_sinh_V_tot = self.k_sq * sinh(V_tot)
         k_sq_sinh_V_tot.crop(epsilon)
-        return gamma - (1/(4*np.pi))*k_sq_sinh_V_tot
+        return gamma + k_sq_sinh_V_tot

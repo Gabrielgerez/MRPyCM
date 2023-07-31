@@ -9,6 +9,6 @@ class DHScreening(ShiftFunction):
     
     def __call__(self, r):
         C_eval = self.C(r)
-        return (1-C_eval)*(self.outside**2)
+        return (1.0-C_eval)*(self.outside**2)
     
 
