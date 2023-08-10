@@ -24,6 +24,8 @@ def run(*args, **kwargs):
     "perm_formulation" : string
     "solvent_type" : string
     "ionic_strength" : float
+    "kain_hist" : int
+    "max_iter" : int
     """
     # Define parameters and defaults
     keys =kwargs.keys()
@@ -36,7 +38,7 @@ def run(*args, **kwargs):
     charge_coords = kwargs["charge_coords"] if ("charge_coords" in keys) else [[0.0000000000,    0.0000000000,    0.000000000]]
     
     cav_coords = kwargs["cav_coords"] if ("cav_coords" in keys) else  charge_coords 
-    cav_radii = kwargs["cav_radii"] if ("cav_radii" in keys) else [3.7794522492515403]  
+    cav_radii = kwargs["cav_radii"] if ("cav_radii" in keys) else [1.0]  
     boundary_width = kwargs["boundary_width"] if ("boundary_width" in keys) else 0.2 
     
     eps_out = kwargs["eps_out"] if ("eps_out" in keys) else 2.0
@@ -44,6 +46,9 @@ def run(*args, **kwargs):
     
     solvent_type = kwargs["solvent_type"] if ("solvent_type" in keys) else "gpe"
     ionic_strength = kwargs["ionic_strength"] if ("ionic_strength" in keys) else 0.1
+    
+    max_iter = kwargs["max_iter"] if ("max_iter" in keys) else 100
+    kain_hist = kwargs["kain_hist"] if ("kain_hist" in keys) else 0
     
     
     # Define MRA and multiwavelet projector
@@ -66,14 +71,14 @@ def run(*args, **kwargs):
         
     if ("pb" == solvent_type.lower()):
         k_sq = P_eps(MRPyCM.DHScreening(C, inside=0.0, outside=MRPyCM.computeKappaOut(eps_out, ionic_strength)))
-        Solver = MRPyCM.PBSolver(dens, perm, k_sq, Poissop, D_abgv)
+        Solver = MRPyCM.PBSolver(dens, perm, k_sq, Poissop, D_abgv, epsilon, max_iter=max_iter, hist=kain_hist)
         
     elif ("lpb" == solvent_type.lower()):
         k_sq = P_eps(MRPyCM.DHScreening(C, inside=0.0, outside=MRPyCM.computeKappaOut(eps_out, ionic_strength)))
-        Solver = MRPyCM.LPBSolver(dens, perm, k_sq, Poissop, D_abgv)
+        Solver = MRPyCM.LPBSolver(dens, perm, k_sq, Poissop, D_abgv, epsilon, max_iter=max_iter, hist=kain_hist)
         
     else:
-        Solver = MRPyCM.GPESolver(dens, perm, Poissop, D_abgv)
+        Solver = MRPyCM.GPESolver(dens, perm, Poissop, D_abgv, epsilon, maxiter=max_iter, hist=kain_hist)
     
     
     reaction_op = MRPyCM.ReactionOperator(Solver)

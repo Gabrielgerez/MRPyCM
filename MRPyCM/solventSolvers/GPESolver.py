@@ -1,13 +1,14 @@
 from vampyr import vampyr3d as vp
 import numpy as np
 from .. import utilities as ut
+#from ..Kain import Kain
 
 
 class GPESolver():
     
     instances = []
     
-    def __init__(self, rho, eps, Poisson_operator, Derivative_operator, prec, maxiter=100):
+    def __init__(self, rho, eps, Poisson_operator, Derivative_operator, prec, maxiter=100, hist=0):
 
         self.instance_index = len(GPESolver.instances)
         GPESolver.instances.append(self)
@@ -18,6 +19,7 @@ class GPESolver():
         self.Density = rho
         self.Permittivity = eps
         self.max_iter = maxiter
+        self.hist = hist  # not used right now
         
         self.rho_eff = -4*np.pi*(self.Density * (self.Permittivity)**(-1)  - self.Density)
         rho_vac = self.Density*(-4*np.pi)
@@ -43,29 +45,17 @@ class GPESolver():
         gamma =  ((-1)*vp.dot( vp.gradient(self.D, self.Permittivity), vp.gradient(self.D,V_tot)) * ( self.Permittivity**(-1)))
         gamma = gamma.crop(epsilon)
         return gamma.deepCopy()
-      
-    
-    @property 
-    def V_R(self):
-        return self._V_R
-
-
-    @V_R.setter
-    def V_R(self, V_r):
-        self._V_R = V_r.deepCopy()  ## probably have this be a deepcopy
 
     
     def setup(self, prec):
+        #kain = Kain(self.hist)
         # start loop
         update = 1.0
         print("iter\t|V_R norm\t\t|update\t\t|E_r\t\t|E_r update") #TODO: make this a better print statement
         E_r_old = 0.0
         for i in range(self.max_iter):
-            ut.plotFunction(self.V_R, left=-5.0, right=5.0, npoints=1000, title=f"V_R_{i}")
-            
             V_tot = self.V_vac + self.V_R
-            ut.plotFunction(V_tot, left=-5.0, right=5.0, npoints=1000, title=f"V_tot_{i}")
-            
+                        
             # compute the surface charge distribution gamma= 1/4pi * \\nabla log(eps)\\cdot\\nabla V_tot
             gamma = self.computeGamma(V_tot, prec)
 
@@ -74,9 +64,13 @@ class GPESolver():
             dV_R = V_R_np1 - self.V_R
             
             #hopefully do KAIN here
+            # not yet implemented properly
+            # if (False):
+            #     self.V_R, dV_R = kain.accelerate(self.V_R, dV_R, prec)
+            
             #hopefully do KAIN here
             
-            self.instances[self.instance_index].V_R += dV_R
+            self.V_R =  self.V_R + dV_R
             
             #check convergence
             update = dV_R.norm()
@@ -86,7 +80,7 @@ class GPESolver():
             print(f"{i} \t |{self.V_R.norm()}\t |{update} \t |{E_r} \t |{dE_r}") #TODO: make this a better print statement
            
             if (update < prec):
-                self.instances[self.instance_index].iterations = i
+                self.iterations = i
                 break
         else:
             print("WARNING: GPESolver did not converge")
@@ -94,4 +88,29 @@ class GPESolver():
         
     def computeEnergy(self):
         return (1/2)*vp.dot(self.V_R, self.Density)
-        
+
+
+    @property 
+    def V_R(self):
+        return self.instances[self.instance_index]._V_R
+
+
+    @V_R.setter
+    def V_R(self, V_r):
+        self.instances[self.instance_index]._V_R = V_r.deepCopy()  ## probably have this be a deepcopy
+    
+    
+    @property
+    def iterations(self):
+        return self.instances[self.instance_index]._iterations
+
+
+    @iterations.setter
+    def iterations(self, i):
+            self.instances[self.instance_index]._iterations = i
+
+
+
+    
+    
+    
