@@ -1,7 +1,7 @@
 from vampyr import vampyr3d as vp
 import numpy as np
 from .. import utilities as ut
-#from ..Kain import Kain
+from ..Kain import Kain
 
 
 class GPESolver():
@@ -21,9 +21,8 @@ class GPESolver():
         self.max_iter = maxiter
         self.hist = hist  # not used right now
         
-        self.rho_eff = -4*np.pi*(self.Density * (self.Permittivity)**(-1)  - self.Density)
-        rho_vac = self.Density*(-4*np.pi)
-        self.V_vac = self.P(rho_vac)
+        self.rho_eff = (4*np.pi)*((self.Density * (self.Permittivity)**(-1))  - (self.Density))
+        self.V_vac = self.P((4*np.pi)*(self.Density))
         
         self.V_R = self.initReactionPotential(prec)
         
@@ -42,13 +41,13 @@ class GPESolver():
     
         
     def computeGamma(self, V_tot, epsilon):
-        gamma =  ((-1)*vp.dot( vp.gradient(self.D, self.Permittivity), vp.gradient(self.D,V_tot)) * ( self.Permittivity**(-1)))
+        gamma =  vp.dot(vp.gradient(self.D,V_tot), vp.gradient(self.D, self.Permittivity)) * ( self.Permittivity**(-1))
         gamma = gamma.crop(epsilon)
         return gamma.deepCopy()
 
     
     def setup(self, prec):
-        #kain = Kain(self.hist)
+        kain = Kain(self.hist)
         # start loop
         update = 1.0
         print("iter\t|V_R norm\t\t|update\t\t|E_r\t\t|E_r update") #TODO: make this a better print statement
@@ -65,13 +64,12 @@ class GPESolver():
             
             #hopefully do KAIN here
             # not yet implemented properly
-            # if (False):
-            #     self.V_R, dV_R = kain.accelerate(self.V_R, dV_R, prec)
+            if (self.hist > 0):
+                 self.V_R, dV_R = kain.accelerate(self.V_R, dV_R, prec)
             
             #hopefully do KAIN here
             
             self.V_R =  self.V_R + dV_R
-            
             #check convergence
             update = dV_R.norm()
             E_r = self.computeEnergy()

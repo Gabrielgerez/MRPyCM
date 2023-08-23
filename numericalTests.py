@@ -1,7 +1,7 @@
 import json 
 import computeSolvent
 
-def make_input(charges, charge_coords, perm_formulation, solvent_type):
+def make_input(charges, charge_coords, perm_formulation, solvent_type, test_case):
 
     in_dict = {
         "order" : 9 ,
@@ -13,10 +13,12 @@ def make_input(charges, charge_coords, perm_formulation, solvent_type):
         "cav_coords" : [[0.0, 0.0, 0.0]],
         "cav_radii" : [3.7794522509156563],  # 2.0 bohr
         "boundary_width" : 0.2,
-        "eps_out" : 2,
+        "eps_out" : 78.54,
         "perm_formulation" : perm_formulation,
         "solvent_type" : solvent_type,
         "ionic_strength" : 0.1,
+        "kain_hist" : 0,
+        "test_case" : test_case
     }
     return in_dict
 
@@ -69,22 +71,23 @@ cases = [
 numeric_tests = {}
 print("Running numeric tests")
 for solver in solvers:
-    print("|\tRunning tests for solver: ", solver)
+    print("-Running tests for solver: ", solver)
     numeric_tests[solver]  = {}
     for fomulation in formulations:
-        print("|\t|\tRunning tests for formulation: ", fomulation)
+        print("--Running tests for formulation: ", fomulation)
         numeric_tests[solver][fomulation] = []
         for i, case in enumerate( cases):
-            print("|\t|\t|\tRunning tests for case: ", i)
-            print("|\t|\t|\t|\tcreating input")
-            in_dict = make_input(**case, perm_formulation=fomulation, solvent_type=solver)
-            print("|\t|\t|\t|\tinput created")
-            print("|\t|\t|\t|\trunning solver")
+            print("---Running tests for case: ", i)
+            print("----creating input")
+            in_dict = make_input(**cases[i], perm_formulation=fomulation, solvent_type=solver, test_case=i)
+            print("----input created")
+            print("----running solver")
             E_r, iterations = computeSolvent.run(**in_dict)
             output = {"E_r": E_r, "iterations": iterations}
-            print("|\t|\t|\t|\tsolver finished, output: ", output)
+            print("----solver finished, output: ", output)
             print("---------------------------------\n")
             numeric_tests[solver][fomulation].append({"input": in_dict, "output": output})
+
             
 
 with open("numeric_tests.json", "w") as f:

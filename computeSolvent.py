@@ -55,20 +55,19 @@ def run(*args, **kwargs):
     MRA = vp.MultiResolutionAnalysis(order=k, box=L)
     print(MRA)
     P_eps = vp.ScalingProjector(mra=MRA, prec=epsilon)
-    P_eps_perm = vp.ScalingProjector(mra=MRA, prec=epsilon/100)
     D_abgv = vp.ABGVDerivative(mra=MRA, a=0.0, b=0.0)
-    Poissop = vp.PoissonOperator(mra=MRA, prec=epsilon/100)
+    Poissop = vp.PoissonOperator(mra=MRA, prec=epsilon)
 
     # nuclear density and total molecular density to compute the vacuum potential
     dens = P_eps(MRPyCM.constructChargeDensity(charge_coords, charges, width_parameter=charge_width))
+
     # Solvent part
     C = MRPyCM.Cavity(cav_coords, cav_radii, boundary_width)
     
     if ("linear" == perm_formulation.lower()):
-        perm = P_eps_perm(MRPyCM.Linear(C, inside=1.0, outside=eps_out))
+        perm = P_eps(MRPyCM.Linear(C, inside=1.0, outside=eps_out))
     else:
-        perm = P_eps_perm(MRPyCM.Exponential(C, inside=1.0, outside=eps_out))
-
+        perm = P_eps(MRPyCM.Exponential(C, inside=1.0, outside=eps_out))
         
     if ("pb" == solvent_type.lower()):
         k_sq = P_eps(MRPyCM.DHScreening(C, inside=0.0, outside=MRPyCM.computeKappaOut(eps_out, ionic_strength)))
@@ -85,7 +84,7 @@ def run(*args, **kwargs):
     reaction_op = MRPyCM.ReactionOperator(Solver)
     reaction_op.setup(epsilon)
     E_R = reaction_op.trace()
-    print("E_R: ", E_R, "iterations: ", Solver.iterations)
+    print("E_R: ", E_R)
     return E_R, Solver.iterations
     
 
