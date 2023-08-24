@@ -53,6 +53,7 @@ def run(*args, **kwargs):
     
     # Define MRA and multiwavelet projector
     MRA = vp.MultiResolutionAnalysis(order=k, box=L)
+    print(MRA)
     P_eps = vp.ScalingProjector(mra=MRA, prec=epsilon)
     D_abgv = vp.ABGVDerivative(mra=MRA, a=0.0, b=0.0)
     Poissop = vp.PoissonOperator(mra=MRA, prec=epsilon)
@@ -67,7 +68,6 @@ def run(*args, **kwargs):
         perm = P_eps(MRPyCM.Linear(C, inside=1.0, outside=eps_out))
     else:
         perm = P_eps(MRPyCM.Exponential(C, inside=1.0, outside=eps_out))
-        
         
     if ("pb" == solvent_type.lower()):
         k_sq = P_eps(MRPyCM.DHScreening(C, inside=0.0, outside=MRPyCM.computeKappaOut(eps_out, ionic_strength)))

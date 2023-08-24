@@ -3,8 +3,8 @@ from .soluteFunctions import *
 from .solventSolvers import *
 from .utilities import *
 
-sys.path.insert(1, 'external/response/src/')
+#sys.path.insert(1, 'external/response/src/')
 
-import KAIN
+#import KAIN
 
 __all__ = ["soluteFunctions", "solventSolvers", "utilities"]
