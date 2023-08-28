@@ -47,10 +47,11 @@ class GPESolver():
 
     
     def setup(self, prec):
-       # kain = Kain(self.hist)
+        #kain = Kain(self.hist)
         # start loop
         update = 1.0
-        print("iter\t|V_R norm\t\t|update\t\t|E_r\t\t|E_r update") #TODO: make this a better print statement
+        print(f"Iter.{' '*2}Norm{' '*12}Update{' '*10}Energy (a.u.){' '*3}Energy update (a.u.)")
+        print(f"{'-'*75}")
         E_r_old = 0.0
         for i in range(self.max_iter):
             V_tot = self.V_vac + self.V_R
@@ -64,9 +65,8 @@ class GPESolver():
             
             #hopefully do KAIN here
             # not yet implemented properly
-            #if (self.hist > 0):
-            #     self.V_R, dV_R = kain.accelerate(self.V_R, dV_R, prec)
-            
+            # if (self.hist > 0):
+            #      self.V_R, dV_R = kain.accelerate(self.V_R, dV_R, prec)
             #hopefully do KAIN here
             
             self.V_R =  self.V_R + dV_R
@@ -75,7 +75,7 @@ class GPESolver():
             E_r = self.computeEnergy()
             dE_r = E_r - E_r_old
             E_r_old = E_r
-            print(f"{i} \t |{self.V_R.norm()}\t |{update} \t |{E_r} \t |{dE_r}") #TODO: make this a better print statement
+            print(f"{i}{' '*6}{self.V_R.norm():14.7e}  {update:14.7e}  {E_r:14.7e}  {dE_r:14.7e}") 
            
             if (update < prec):
                 self.iterations = i
