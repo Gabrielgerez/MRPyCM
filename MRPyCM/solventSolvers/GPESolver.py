@@ -1,7 +1,12 @@
+import sys
 from vampyr import vampyr3d as vp
 import numpy as np
 from .. import utilities as ut
-#from ..Kain import Kain
+
+sys.path.insert(1, 'external/response/src/')
+from KAIN import KAIN
+
+
 
 
 class GPESolver():
@@ -47,7 +52,7 @@ class GPESolver():
 
     
     def setup(self, prec):
-        #kain = Kain(self.hist)
+        Kain = KAIN(self.hist)
         # start loop
         update = 1.0
         print(f"Iter.{' '*2}Norm{' '*12}Update{' '*10}Energy (a.u.){' '*3}Energy update (a.u.)")
@@ -65,8 +70,8 @@ class GPESolver():
             
             #hopefully do KAIN here
             # not yet implemented properly
-            # if (self.hist > 0):
-            #      self.V_R, dV_R = kain.accelerate(self.V_R, dV_R, prec)
+            if (self.hist > 0):
+                self.V_R, dV_R = Kain.accelerate(self.V_R, dV_R)
             #hopefully do KAIN here
             
             self.V_R =  self.V_R + dV_R
