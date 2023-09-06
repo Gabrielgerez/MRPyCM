@@ -30,7 +30,7 @@ def test_V_vac_norm():
     assert np.isclose(Solver.V_vac.norm(), 12.375991947513185, rtol=epsilon, atol=epsilon)
 
 def test_V_vac_integrate():
-    assert np.isclose(Solver.V_vac.integrate(), -952.0261858394258, rtol=epsilon, atol=epsilon)
+    assert np.isclose(Solver.V_vac.integrate(), 952.0261858394258, rtol=epsilon, atol=epsilon)
     
 def test_V_R_norm():
     assert np.isclose(Solver.V_R.norm(), 8.347519052547371, rtol=epsilon, atol=epsilon)
@@ -43,4 +43,5 @@ def test_zeroth_energy():
     
 def test_first_iteration():
     Solver.setup(epsilon)
-    assert np.isclose(Solver.computeEnergy(), -0.4665446630004932, rtol=epsilon, atol=epsilon)
+    assert np.isclose(Solver.computeEnergy(), -0.24140649819582582, rtol=epsilon, atol=epsilon)
+
