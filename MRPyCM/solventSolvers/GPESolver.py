@@ -1,7 +1,12 @@
+import sys
 from vampyr import vampyr3d as vp
 import numpy as np
 from .. import utilities as ut
-from ..Kain import Kain
+
+sys.path.insert(1, 'external/response/src/')
+from KAIN import KAIN
+
+
 
 
 class GPESolver():
@@ -47,7 +52,7 @@ class GPESolver():
 
     
     def setup(self, prec):
-        kain = Kain(self.hist)
+        Kain = KAIN(self.hist)
         # start loop
         update = 1.0
         print(f"Iter.{' '*2}Norm{' '*12}Update{' '*10}Energy (a.u.){' '*3}Energy update (a.u.)")
@@ -61,22 +66,20 @@ class GPESolver():
 
             # solve the generalized poisson equation for V_R 
             V_R_np1 = self.P((self.rho_eff) + (gamma))
-            dV_R = V_R_np1 - self.V_R
-            
+            dpotential = [V_R_np1 - self.V_R]
             #hopefully do KAIN here
             # not yet implemented properly
             if (self.hist > 0):
-                 self.V_R, dV_R = kain.accelerate(self.V_R, dV_R, prec)
-            
+                dpotential = Kain.accelerate([self.V_R], dpotential)
             #hopefully do KAIN here
             
-            self.V_R =  self.V_R + dV_R
+            self.V_R =  self.V_R + dpotential[0]
             #check convergence
-            update = dV_R.norm()
+            update = dpotential[0].norm()
             E_r = self.computeEnergy()
             dE_r = E_r - E_r_old
             E_r_old = E_r
-            print(f"{i}{' '*6}{self.V_R.norm():14.7e}  {update:14.7e}  {E_r:14.7e}  {dE_r:14.7e}") 
+            print(f"{i:2d}{' '*5}{self.V_R.norm():14.7e}  {update:14.7e}  {E_r:14.7e}  {dE_r:14.7e}") 
            
             if (update < prec):
                 self.iterations = i

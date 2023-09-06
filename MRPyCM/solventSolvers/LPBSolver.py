@@ -9,4 +9,4 @@ class LPBSolver(PBSolver):
         gamma =  super(PBSolver, self).computeGamma(V_tot, epsilon)
         k_sq_V_tot = self.k_sq * V_tot
         k_sq_V_tot.crop(epsilon)
-        return gamma + k_sq_V_tot
+        return gamma - k_sq_V_tot

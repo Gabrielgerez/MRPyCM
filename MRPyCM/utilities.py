@@ -1,7 +1,5 @@
 from vampyr import vampyr3d as vp
 import matplotlib.pyplot as plt
-from matplotlib import cm
-from matplotlib.colors import BoundaryNorm
 import numpy as np
 from qcelemental.physical_constants.context import PhysicalConstantsContext
 
@@ -39,8 +37,7 @@ def plotFunction(function, left=-1.0, right=1.0, npoints=100, title=""):
         f_plt = [function([x, 0.0, 0.0]) for x in x_plt]
         plt.plot(x_plt, f_plt)
         plt.title(title)
-        plt.savefig(title+".png")
-        plt.clf()
+        plt.show()
 
 
 def constructChargeDensity(positions, charges, width_parameter):
@@ -62,30 +59,3 @@ def constructChargeDensity(positions, charges, width_parameter):
         alpha = (beta / np.pi)**(3.0/2.0)
         charge_density.append(vp.GaussFunc(beta=beta, alpha=alpha*charge, position=pos, poly_exponent=[0,0,0]))
     return charge_density
-
-
-
-def plotHeatmap(function, y_min=-1.0, y_max=1.0, x_min=-1.0, x_max=1.0, npoints=100, title=""):
-    y_plt = np.linspace(y_min, y_max, npoints)
-    x_plt = np.linspace(x_min, x_max, npoints)
-    f_plt = np.zeros((npoints, npoints))
-    for i in range(npoints):
-        for j in range(npoints):
-            f_plt[i,j] = function([x_plt[i], y_plt[j], 0.0])
-    
-    fig, ax = plt.subplots()
-    cmap = cm.get_cmap('viridis')    
-    
-    # define the bins and normalize and forcing 0 to be part of the colorbar!
-    bounds = np.linspace(np.min(f_plt),np.max(f_plt),100)
-    idx=np.searchsorted(bounds,0)
-    bounds=np.insert(bounds,idx,0)
-    norm = BoundaryNorm(bounds, cmap.N)
-    
-    plot = ax.imshow(f_plt, extent=[x_min, x_max, y_min, y_max], cmap=cmap, norm=norm)
-    fig.colorbar(plot, ax=ax)
-
-    plt.title(title)
-    plt.savefig(title+".png")
-    plt.clf()
-    plt.close()
