@@ -10,27 +10,24 @@ from KAIN import KAIN
 
 
 class GPESolver():
+    V_R : vp.FunctionTree
+    iterations : int
     
-    instances = []
-    
-    def __init__(self, rho, eps, Poisson_operator, Derivative_operator, prec, maxiter=100, hist=0):
+    def __init__(self, rho, eps, Poisson_operator, Derivative_operator, maxiter=100, hist=0):
 
-        self.instance_index = len(GPESolver.instances)
-        GPESolver.instances.append(self)
-
-        self.iterations = 0
-        self.P = Poisson_operator
-        self.D = Derivative_operator
         self.Density = rho
         self.Permittivity = eps
+        self.P = Poisson_operator
+        self.D = Derivative_operator
         self.max_iter = maxiter
         self.hist = hist  # not used right now
         
         self.rho_eff = (4*np.pi)*((self.Density * (self.Permittivity)**(-1))  - (self.Density))
-        self.V_vac = self.P((4*np.pi)*(self.Density))
-        
-        self.V_R = self.initReactionPotential(prec)
-        
+        self.iterations = 0
+       
+        self.V_vac = rho ## dummy value
+        self.V_R = rho ## dummy value
+            
     
     def initReactionPotential(self, prec):
         """
@@ -40,9 +37,7 @@ class GPESolver():
         """    
         
         gamma_0 = self.computeGamma(self.V_vac, prec)
-        V_R_0 = self.P(self.rho_eff + gamma_0)
-        return V_R_0.deepCopy()
-        
+        self.V_R = self.P(self.rho_eff + gamma_0)
     
         
     def computeGamma(self, V_tot, epsilon):
@@ -52,12 +47,20 @@ class GPESolver():
 
     
     def setup(self, prec):
-        Kain = KAIN(self.hist)
-        # start loop
-        update = 1.0
         print(f"Iter.{' '*2}Norm{' '*12}Update{' '*10}Energy (a.u.){' '*3}Energy update (a.u.)")
         print(f"{'-'*75}")
-        E_r_old = 0.0
+        
+        self.V_vac = self.P((4*np.pi)*(self.Density))
+        self.initReactionPotential(prec)
+        
+        Kain = KAIN(self.hist)
+        # start loop
+        update = self.V_R.norm()
+        
+        
+        E_r = self.computeEnergy()
+        dE_r = E_r
+        print(f"{0:2d}{' '*5}{self.V_R.norm():14.7e}  {update:14.7e}  {E_r:14.7e}  {dE_r:14.7e}") 
         for i in range(self.max_iter):
             V_tot = self.V_vac + self.V_R
                         
@@ -76,13 +79,14 @@ class GPESolver():
             self.V_R =  self.V_R + dpotential[0]
             #check convergence
             update = dpotential[0].norm()
-            E_r = self.computeEnergy()
-            dE_r = E_r - E_r_old
-            E_r_old = E_r
-            print(f"{i:2d}{' '*5}{self.V_R.norm():14.7e}  {update:14.7e}  {E_r:14.7e}  {dE_r:14.7e}") 
-           
+            E_r_np1 = self.computeEnergy()
+            
+            dE_r = E_r_np1 - E_r
+            E_r = E_r_np1
+            print(f"{i+1:2d}{' '*5}{self.V_R.norm():14.7e}  {update:14.7e}  {E_r:14.7e}  {dE_r:14.7e}") 
+            
             if (update < prec):
-                self.iterations = i
+                self.iterations = i+1
                 break
         else:
             print("WARNING: GPESolver did not converge")
@@ -90,27 +94,6 @@ class GPESolver():
         
     def computeEnergy(self):
         return (1/2)*vp.dot(self.V_R, self.Density)
-
-
-    @property 
-    def V_R(self):
-        return self.instances[self.instance_index]._V_R
-
-
-    @V_R.setter
-    def V_R(self, V_r):
-        self.instances[self.instance_index]._V_R = V_r.deepCopy()  ## probably have this be a deepcopy
-    
-    
-    @property
-    def iterations(self):
-        return self.instances[self.instance_index]._iterations
-
-
-    @iterations.setter
-    def iterations(self, i):
-            self.instances[self.instance_index]._iterations = i
-
 
 
     

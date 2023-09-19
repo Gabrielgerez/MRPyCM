@@ -50,6 +50,8 @@ def run(*args, **kwargs):
     max_iter = kwargs["max_iter"] if ("max_iter" in keys) else 100
     kain_hist = kwargs["kain_hist"] if ("kain_hist" in keys) else 0
     
+
+    
     
     # Define MRA and multiwavelet projector
     MRA = vp.MultiResolutionAnalysis(order=k, box=L)
@@ -71,14 +73,14 @@ def run(*args, **kwargs):
         
     if ("pb" == solvent_type.lower()):
         k_sq = P_eps(MRPyCM.DHScreening(C, inside=0.0, outside=MRPyCM.computeKappaOut(eps_out, ionic_strength)))
-        Solver = MRPyCM.PBSolver(dens, perm, k_sq, Poissop, D_abgv, epsilon, max_iter=max_iter, hist=kain_hist)
+        Solver = MRPyCM.PBSolver(dens, perm, k_sq,  Poissop, D_abgv, max_iter=max_iter, hist=kain_hist)
         
     elif ("lpb" == solvent_type.lower()):
         k_sq = P_eps(MRPyCM.DHScreening(C, inside=0.0, outside=MRPyCM.computeKappaOut(eps_out, ionic_strength)))
-        Solver = MRPyCM.LPBSolver(dens, perm, k_sq, Poissop, D_abgv, epsilon, max_iter=max_iter, hist=kain_hist)
+        Solver = MRPyCM.LPBSolver(dens, perm, k_sq, Poissop, D_abgv, max_iter=max_iter, hist=kain_hist)
         
     else:
-        Solver = MRPyCM.GPESolver(dens, perm, Poissop, D_abgv, epsilon, maxiter=max_iter, hist=kain_hist)
+        Solver = MRPyCM.GPESolver(dens, perm, Poissop, D_abgv, maxiter=max_iter, hist=kain_hist)
     
     
     reaction_op = MRPyCM.ReactionOperator(Solver)
@@ -91,4 +93,5 @@ def run(*args, **kwargs):
 
 if __name__ == '__main__':
     arg_dict = eval(sys.argv[1])
-    run(**arg_dict)
+    energy, iterations = run(**arg_dict)
+    print("Energy: ", energy, " Iterations: ", iterations)
