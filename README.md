@@ -1,5 +1,5 @@
 # MRPyCM ![WIP](https://img.shields.io/badge/-WIP-blue)
-A Python implementation of the Polarizable continuum model (PCM) in[MRChem](https://github.com/MRChemSoft/mrchem).
+A Python implementation of the Polarizable continuum model (PCM) in [MRChem](https://github.com/MRChemSoft/mrchem).
 This is implemented using [VAMPYR](https://github.com/MRChemSoft/vampyr).
 This is a work in progress.
 
@@ -37,5 +37,7 @@ where `dict_str` is a dictionary of input parameters as
     'perm_type': str,                       # Formulation of the permittivity either "exponential" or "linear".
     'solvent_type: str,                     # Which solver to use, avaliable are "standard" (GPESolver), "pb" (PBSolver) and "lpb" (LPBSolver).
     'I': float                              # Ionic strength in mol/L. Can also be interpreted as the electrolyte concentration.
+    'max_iter': int,                        # Maximum number of iterations before exiting the solver.
+    'kain_hist': int,                       # Number of iterations to keep in the history of the Kain solver.
 }
 ```

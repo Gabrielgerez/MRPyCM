@@ -8,8 +8,8 @@ class ReactionOperator():
         
     def setup(self, prec):
         print("Setting up reaction operator")
-        self.Solver.solveEquation(prec)
+        self.Solver.iterateEquation(prec)
 
 
     def trace(self):
-        return self.Solver.computeEnergy()
+        return self.Solver.energy_convergence[-1]

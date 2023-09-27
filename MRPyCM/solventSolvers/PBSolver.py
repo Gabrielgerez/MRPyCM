@@ -6,9 +6,9 @@ from . import GPESolver
 class PBSolver(GPESolver):
     
     
-    def __init__(self, rho, eps, kappa, Poisson_operator, Derivative_operator, max_iter=100, kain_hist=0):
+    def __init__(self, rho, eps, kappa, Poisson_operator, Derivative_operator, max_iter=100, hist=0):
         self.k_sq = kappa
-        super().__init__(rho, eps, Poisson_operator, Derivative_operator, max_iter, kain_hist)
+        super().__init__(rho, eps, Poisson_operator, Derivative_operator, max_iter, hist)
         
         
         

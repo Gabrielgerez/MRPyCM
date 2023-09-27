@@ -1,7 +1,6 @@
 import sys
 from vampyr import vampyr3d as vp
 import numpy as np
-from .. import utilities as ut
 
 sys.path.insert(1, 'external/response/src/')
 from KAIN import KAIN
@@ -13,14 +12,16 @@ class GPESolver():
     V_R : vp.FunctionTree
     iterations : int
     
-    def __init__(self, rho, eps, Poisson_operator, Derivative_operator, maxiter=100, hist=0):
+    def __init__(self, rho, eps, Poisson_operator, Derivative_operator, max_iter=100, hist=0):
 
         self.Density = rho
         self.Permittivity = eps
         self.P = Poisson_operator
         self.D = Derivative_operator
-        self.max_iter = maxiter
+        self.max_iter = max_iter
         self.hist = hist  # not used right now
+        
+        self.energy_convergence = []
         
         self.rho_eff = (4*np.pi)*((self.Density * (self.Permittivity)**(-1))  - (self.Density))
         self.iterations = 0
@@ -46,7 +47,7 @@ class GPESolver():
         return gamma.deepCopy()
 
     
-    def solveEquation(self, prec):
+    def iterateEquation(self, prec):
         print(f"Iter.{' '*2}Norm{' '*12}Update{' '*10}Energy (a.u.){' '*3}Energy update (a.u.)")
         print(f"{'-'*75}")
         
@@ -59,6 +60,7 @@ class GPESolver():
         
         
         E_r = self.computeEnergy()
+        self.energy_convergence.append(E_r)
         dE_r = E_r
         print(f"{0:2d}{' '*5}{self.V_R.norm():14.7e}  {update:14.7e}  {E_r:14.7e}  {dE_r:14.7e}") 
         for i in range(self.max_iter):
@@ -83,6 +85,7 @@ class GPESolver():
             
             dE_r = E_r_np1 - E_r
             E_r = E_r_np1
+            self.energy_convergence.append(E_r)
             print(f"{i+1:2d}{' '*5}{self.V_R.norm():14.7e}  {update:14.7e}  {E_r:14.7e}  {dE_r:14.7e}") 
             
             if (update < prec):
