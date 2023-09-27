@@ -1,4 +1,3 @@
-import sys 
 from .soluteFunctions import *
 from .solventSolvers import *
 from .utilities import *
