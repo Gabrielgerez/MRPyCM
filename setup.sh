@@ -12,8 +12,7 @@ find_in_conda_env(){
     conda env list | grep "${@}" >/dev/null 2>/dev/null
 }
 
-# create or activate conda environment
-# check if environment exists, if not create it then activate it
+# check if conda environment exists, if not create it.
 if find_in_conda_env ".*MRPyCM-env.*" ; then
     echo "MRPyCM-env found"
 else 
@@ -21,8 +20,13 @@ else
     conda env create -f environment.yml 
 fi
 
+# activate conda environment
 echo "Activating MRPyCM-env"
 conda activate MRPyCM-env
+
+# install MRPyCM
+echo "Installing MRPyCM"
+pip install .
 
 # run tests
 echo "Running tests"

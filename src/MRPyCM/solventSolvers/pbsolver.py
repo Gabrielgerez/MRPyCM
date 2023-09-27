@@ -1,7 +1,7 @@
 import numpy as np
 from vampyr import vampyr3d as vp
 
-from . import GPESolver
+from .gpesolver import GPESolver
 
 
 class PBSolver(GPESolver):

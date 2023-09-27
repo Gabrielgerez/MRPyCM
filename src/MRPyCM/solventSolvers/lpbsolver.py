@@ -1,6 +1,6 @@
 import numpy as np
 
-from . import PBSolver
+from .pbsolver import PBSolver
 
 
 class LPBSolver(PBSolver):

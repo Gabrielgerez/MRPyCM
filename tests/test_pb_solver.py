@@ -23,7 +23,7 @@ C = MRPyCM.Cavity(charge_coords, [1.0], 0.2)
 
 dens = P_eps(MRPyCM.constructChargeDensity(charge_coords, charges, width_parameter=charge_width))
 
-perm = P_eps_perm(MRPyCM.Exponential(C, inside=1.0, outside=2.0))
+perm = P_eps_perm(MRPyCM.ExpPerm(C, inside=1.0, outside=2.0))
 k_sq = P_eps_perm(MRPyCM.DHScreening(C, inside=0.0, outside=MRPyCM.computeKappaOut(eps_out=2.0, Ionic_strength=0.001)))
 
 Solver = MRPyCM.PBSolver(dens, perm, k_sq, Poissop, D_abgv, max_iter=max_iter, hist=kain_hist)

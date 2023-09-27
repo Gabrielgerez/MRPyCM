@@ -5,8 +5,8 @@ from vampyr import vampyr3d as vp
 C = MRPyCM.Cavity([[0.0, 0.0, 0.0]], [1.0], 0.2)
 MRA = vp.MultiResolutionAnalysis(box=[-5, 5], order=5)
 perm_out = 2.0
-lin_perm = MRPyCM.Linear(C, outside=perm_out)
-exp_perm = MRPyCM.Exponential(C, outside=perm_out)
+lin_perm = MRPyCM.LinPerm(C, outside=perm_out)
+exp_perm = MRPyCM.ExpPerm(C, outside=perm_out)
 epsilon = 1.0e-3
 P_eps = vp.ScalingProjector(mra=MRA, prec=epsilon)
 lin_tree = P_eps(lin_perm)

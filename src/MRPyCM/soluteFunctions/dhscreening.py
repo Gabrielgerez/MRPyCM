@@ -1,4 +1,4 @@
-from . import ShiftFunction
+from .shiftfunction import ShiftFunction
 
 
 class DHScreening(ShiftFunction):
