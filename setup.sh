@@ -24,12 +24,6 @@ fi
 echo "Activating MRPyCM-env"
 conda activate MRPyCM-env
 
-
-
-# build vampyr
-echo "Building vampyr"
-cd external/vampyr
-pip install .
-
 # run tests
+echo "Running tests"
 pytest --ignore=external
