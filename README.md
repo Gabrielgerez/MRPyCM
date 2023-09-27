@@ -1,4 +1,4 @@
-# MRPyCM [![WIP]()]
+# MRPyCM ![WIP](https://img.shields.io/badge/anytext-youlike-blue)
 A Python implementation of the Polarizable continuum model (PCM) in[MRChem](https://github.com/MRChemSoft/mrchem).
 This is implemented using [VAMPYR](https://github.com/MRChemSoft/vampyr).
 This is a work in progress.
