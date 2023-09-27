@@ -8,7 +8,7 @@ class ReactionOperator():
         
     def setup(self, prec):
         print("Setting up reaction operator")
-        self.Solver.setup(prec)
+        self.Solver.solveEquation(prec)
 
 
     def trace(self):

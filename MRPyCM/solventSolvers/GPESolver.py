@@ -46,7 +46,7 @@ class GPESolver():
         return gamma.deepCopy()
 
     
-    def setup(self, prec):
+    def solveEquation(self, prec):
         print(f"Iter.{' '*2}Norm{' '*12}Update{' '*10}Energy (a.u.){' '*3}Energy update (a.u.)")
         print(f"{'-'*75}")
         

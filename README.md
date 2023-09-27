@@ -1,10 +1,28 @@
-# MRPyCM
-A Python implementation of the Polarizable continuum model (PCM) implemented in MRChem
+# MRPyCM [![WIP]()]
+A Python implementation of the Polarizable continuum model (PCM) in[MRChem](https://github.com/MRChemSoft/mrchem).
+This is implemented using [VAMPYR](https://github.com/MRChemSoft/vampyr).
+This is a work in progress.
 
-To run:
+
+## installation
+To use the code you download it from github and run the script `setup.sh` as follows:
+```bash
+git clone git@github.com:Gabrielgerez/MRPyCM.git
+cd MRPyCM
+./setup.sh
+``` 
+
+## Usage
+The code can be used as an import library by:
+``` python
+import MRPycm as mpcm
 ```
+or you can run it as an executable through the command line by:
+
+```bash
 python computeSolvent.py <dict_str>
 ```
+
 where `dict_str` is a dictionary of input parameters as
 
 ```
