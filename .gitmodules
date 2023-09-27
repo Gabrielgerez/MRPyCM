@@ -2,6 +2,3 @@
 	path = external/response
 	url = git@github.com:Dheasra/response.git
 	branch=main
-[submodule "external/vampyr"]
-	path = external/vampyr
-	url = git@github.com:MRChemSoft/vampyr.git
