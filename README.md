@@ -10,9 +10,10 @@ This is a work in progress.
 [!IMPORTANT]
 (python 3.11.4+ and pip 23.2.1+ required)
 
-You can install add the package to your python/pip/conda environment by cloning the repository
+You can install add the package to your python/pip/conda environment by cloning the repository and submodules
 ```bash
 git clone git@github.com:Gabrielgerez/MRPyCM.git
+git submodule update --remote --recursive --init
 ```
 and then installing it with pip 
 
