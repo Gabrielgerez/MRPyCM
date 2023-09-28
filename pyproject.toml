@@ -1,6 +1,12 @@
+[tool.isort]
+profile = "black"
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [project]
 name = "MRPyCM"
@@ -11,6 +17,14 @@ authors = [
 description = "A Python package for the Polarizable Continuum model in a Multi-Resolution framework"
 readme = "README.md"
 requires-python = ">=3.11.4"
+dependencies = [
+  "numpy==1.25.1",
+  "scipy==1.11.1",
+  "matplotlib==3.7.2",
+  "qcelemental==0.25.1",
+  "pytest==7.4.0",
+  "vampyr@git+https://github.com/MRChemSoft/vampyr.git@413283f6a21a02fb1d4e78e4d055303aec8a167b",
+]
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
