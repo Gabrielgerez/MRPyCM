@@ -7,8 +7,8 @@ This is a work in progress.
 ## Installation
 ### Building from source
 
-[!IMPORTANT]
-(python 3.11.4+ and pip 23.2.1+ required)
+> [!IMPORTANT]
+> python 3.11.4+ and pip 23.2.1+ required
 
 You can install add the package to your python/pip/conda environment by cloning the repository and submodules
 ```bash
