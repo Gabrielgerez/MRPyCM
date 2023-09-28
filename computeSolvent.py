@@ -22,10 +22,10 @@ def run(*args, **kwargs):
     "boundary_width" : float
     "eps_out" : float
     "perm_formulation" : string
-    "solvent_type" : string
+    "solver_type" : string
     "ionic_strength" : float
-    "kain_hist" : int
     "max_iter" : int
+    "kain_hist" : int
     """
     # Define parameters and defaults
     keys =kwargs.keys()
@@ -44,7 +44,7 @@ def run(*args, **kwargs):
     eps_out = kwargs["eps_out"] if ("eps_out" in keys) else 2.0
     perm_formulation = kwargs["perm_formulation"] if "perm_formulation" in keys else "exponential"
     
-    solvent_type = kwargs["solvent_type"] if ("solvent_type" in keys) else "gpe"
+    solvent_type = kwargs["solver_type"] if ("solver_type" in keys) else "gpe"
     ionic_strength = kwargs["ionic_strength"] if ("ionic_strength" in keys) else 0.1
     
     max_iter = kwargs["max_iter"] if ("max_iter" in keys) else 100
