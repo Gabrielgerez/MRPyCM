@@ -4,12 +4,21 @@ This is implemented using [VAMPYR](https://github.com/MRChemSoft/vampyr).
 This is a work in progress.
 
 
-## installation
-To use the code you download it from github and run the script `setup.sh` as follows:
+## Installation
+### Building from source
+
+[!IMPORTANT]
+(python 3.11.4+ and pip 23.2.1+ required)
+
+You can install add the package to your python/pip/conda environment by cloning the repository
 ```bash
 git clone git@github.com:Gabrielgerez/MRPyCM.git
+```
+and then installing it with pip 
+
+```bash
 cd MRPyCM
-./setup.sh
+pip install .
 ``` 
 
 ## Usage
@@ -17,7 +26,7 @@ The code can be used as an import library by:
 ``` python
 import MRPycm as mpcm
 ```
-or you can run it as an executable through the command line by:
+or you can run the executable `computeSolvent.py` as:
 
 ```bash
 python computeSolvent.py <dict_str>
