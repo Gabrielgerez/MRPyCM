@@ -1,7 +1,7 @@
-from .shiftfunction import ShiftFunction
+from .stepfunction import StepFunction
 
 
-class DHScreening(ShiftFunction):
+class DHScreening(StepFunction):
     """Square of the Debye Huckel Screening parameter
     dependent on three-dimensional space
     """
